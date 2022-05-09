@@ -7,7 +7,7 @@ const lightThemeOptions: ThemeOptions = {
       main: "#684bde",
     },
     secondary: {
-      main: "#f50057",
+      main: "#4abeff",
     },
   },
 };

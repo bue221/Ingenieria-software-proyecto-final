@@ -1,0 +1,36 @@
+.container {
+  background: transparent;
+  position: relative;
+  flex: 1;
+  height: 100vh;
+  padding-top: 4em;
+}
+
+.img {
+  position: absolute;
+  right: 0;
+}
+
+.form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3em;
+  text-align: left;
+}
+
+.MainFormContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+}
+
+.secondaryFormContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
