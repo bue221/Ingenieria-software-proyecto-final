@@ -20,6 +20,12 @@ import { createFirestoreInstance } from "redux-firestore";
 import { store } from "shared/redux";
 import { Provider } from "react-redux";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import Loader from "shared/UI/components/Loader";
+import { ToastContainer } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
@@ -42,7 +48,7 @@ const rrfProps = {
   firebase,
   config: rrfConfig,
   dispatch: store.dispatch,
-  createFirestoreInstance, //since we are using Firestore
+  createFirestoreInstance,
 };
 
 const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
@@ -53,8 +59,22 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
       <Provider store={store}>
         <ReactReduxFirebaseProvider {...rrfProps}>
           <ThemeProvider theme={lightTheme}>
-            <CssBaseline />
-            <Component {...pageProps} />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <CssBaseline />
+              <Component {...pageProps} />
+              <Loader />
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+              />
+            </LocalizationProvider>
           </ThemeProvider>
         </ReactReduxFirebaseProvider>
       </Provider>
