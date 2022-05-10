@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button, IconButton } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import React from "react";
@@ -11,7 +11,12 @@ import TeacherLayout from "shared/UI/layouts/TeacherLayout";
 const AddCourse = () => {
   const router = useRouter();
   const firebase = useFirebase();
-  const { control } = useForm();
+  const { control } = useForm({
+    defaultValues: {
+      clases: [{}],
+    },
+  });
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "clases",
@@ -25,53 +30,79 @@ const AddCourse = () => {
       <TeacherLayout>
         <>
           <Box>
-            <Typography>Crea un curso</Typography>
+            <Typography color="#151143" fontSize="24px" fontWeight="bold">
+              Crea un curso
+            </Typography>
             <Box>
-              <TextFieldController
-                name="nombre"
-                label="Nombre del curso"
-                control={control}
-              />
-              <TextFieldController
-                name="descripcion"
-                label="Descripcion"
-                control={control}
-              />
-              <TextFieldController
-                name="autor"
-                label="Nombre del autor del curso"
-                control={control}
-              />
-              <ul>
-                {fields.map((item, index) => (
-                  <li key={item.id}>
-                    <TextFieldController
-                      name={`test.${index}.titulo`}
-                      control={control}
-                      label="Titulo"
-                    />
-                    <TextFieldController
-                      name={`test.${index}.urlVideo`}
-                      control={control}
-                      label="url Video"
-                    />
-                    <button type="button" onClick={() => remove(index)}>
-                      Delete
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <button type="button" onClick={() => append({})}>
-                append
-              </button>
-              <TextFieldController
-                name="precio"
-                label="Precio"
-                control={control}
-              />
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <TextFieldController
+                  name="nombre"
+                  label="Nombre del curso"
+                  control={control}
+                />
+                <TextFieldController
+                  name="descripcion"
+                  label="Descripcion"
+                  control={control}
+                />
+                <TextFieldController
+                  name="autor"
+                  label="Nombre del autor del curso"
+                  control={control}
+                />
+                <TextFieldController
+                  name="precio"
+                  label="Precio"
+                  control={control}
+                />
+
+                <Typography color="#151143" fontSize="16px">
+                  Añade los capitulos que va ha tener tu curso:
+                </Typography>
+                <div>
+                  {fields.map((item, index) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        display: "flex",
+                        width: "100%",
+                        alignItems: "center",
+                        gap: "3em",
+                      }}
+                    >
+                      <Typography color="#151143" fontSize="24px">
+                        {index + 1}
+                      </Typography>
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          width: "100%",
+                        }}
+                      >
+                        <TextFieldController
+                          name={`test.${index}.titulo`}
+                          control={control}
+                          label="Titulo"
+                        />
+                        <TextFieldController
+                          name={`test.${index}.urlVideo`}
+                          control={control}
+                          label="url Video"
+                        />
+                      </div>
+                      <div>
+                        <IconButton onClick={() => remove(index)}>X</IconButton>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Button type="button" onClick={() => append({})}>
+                  Añadir capitulo
+                </Button>
+              </Box>
             </Box>
           </Box>
-          <FieldArray />
         </>
       </TeacherLayout>
     </>
