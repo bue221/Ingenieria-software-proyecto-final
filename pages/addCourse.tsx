@@ -1,26 +1,28 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Typography, Button, IconButton } from "@mui/material";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useFirebase } from "react-redux-firebase";
-import FieldArray from "shared/fieldArray";
+import NestedArray from "shared/forms/nestedArray";
 import TextFieldController from "shared/UI/components/TextfieldController";
 import TeacherLayout from "shared/UI/layouts/TeacherLayout";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const AddCourse = () => {
-  const router = useRouter();
-  const firebase = useFirebase();
-  const { control } = useForm({
+  const { control, register, handleSubmit } = useForm({
     defaultValues: {
-      clases: [{}],
+      capitulos: [{}],
     },
   });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "clases",
+    name: "capitulos",
   });
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
 
   return (
     <>
@@ -29,12 +31,12 @@ const AddCourse = () => {
       </Head>
       <TeacherLayout>
         <>
-          <Box>
+          <Box py={2}>
             <Typography color="#151143" fontSize="24px" fontWeight="bold">
               Crea un curso
             </Typography>
             <Box>
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <TextFieldController
                   name="nombre"
                   label="Nombre del curso"
@@ -56,45 +58,75 @@ const AddCourse = () => {
                   control={control}
                 />
 
-                <Typography color="#151143" fontSize="16px">
+                <Typography
+                  color="#151143"
+                  fontSize="24px"
+                  textAlign="center"
+                  mt={4}
+                >
                   Añade los capitulos que va ha tener tu curso:
                 </Typography>
                 <div>
                   {fields.map((item, index) => (
-                    <div
-                      key={item.id}
-                      style={{
-                        display: "flex",
-                        width: "100%",
-                        alignItems: "center",
-                        gap: "3em",
-                      }}
-                    >
-                      <Typography color="#151143" fontSize="24px">
-                        {index + 1}
-                      </Typography>
+                    <>
                       <div
+                        key={item.id}
                         style={{
-                          display: "flex",
-                          flexDirection: "column",
+                          margin: "10px 0",
                           width: "100%",
+                          alignItems: "center",
+                          gap: "3em",
                         }}
                       >
-                        <TextFieldController
-                          name={`test.${index}.titulo`}
-                          control={control}
-                          label="Titulo"
-                        />
-                        <TextFieldController
-                          name={`test.${index}.urlVideo`}
-                          control={control}
-                          label="url Video"
-                        />
+                        <Typography
+                          color="#151143"
+                          fontSize="16px"
+                          fontWeight="bold"
+                        >
+                          Capitulo {index + 1}
+                        </Typography>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              width: "100%",
+                              gap: 10,
+                            }}
+                          >
+                            <TextFieldController
+                              name={`capitulos.${index}.titulo`}
+                              control={control}
+                              label="Titulo"
+                            />
+                            <TextFieldController
+                              name={`capitulos.${index}.subtitulo`}
+                              control={control}
+                              label="Subtitulo"
+                            />
+                            <TextFieldController
+                              name={`capitulos.${index}.objetivo`}
+                              control={control}
+                              label="Objetivo"
+                            />
+                            <TextFieldController
+                              name={`capitulos.${index}.descripcion`}
+                              control={control}
+                              label="Descripción"
+                            />
+                          </div>
+                          <div>
+                            <IconButton onClick={() => remove(index)}>
+                              <DeleteIcon />
+                            </IconButton>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <IconButton onClick={() => remove(index)}>X</IconButton>
-                      </div>
-                    </div>
+                      <NestedArray
+                        nestIndex={index}
+                        {...{ control, register }}
+                      />
+                    </>
                   ))}
                 </div>
                 <Button type="button" onClick={() => append({})}>
@@ -102,6 +134,15 @@ const AddCourse = () => {
                 </Button>
               </Box>
             </Box>
+            <Button
+              fullWidth
+              color="secondary"
+              variant="contained"
+              sx={{ mt: 5 }}
+              onClick={handleSubmit(onSubmit)}
+            >
+              Crear el curso
+            </Button>
           </Box>
         </>
       </TeacherLayout>
