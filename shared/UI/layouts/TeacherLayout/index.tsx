@@ -34,7 +34,9 @@ const TeacherLayout: React.FC = ({ children }) => {
               AprendeEnLinea Profesores
             </Typography>
             <Box>
-              <Button onClick={() => firebase.logout()}>Crear cursos</Button>
+              <Button onClick={() => router.push("/addCourse")}>
+                Crear cursos
+              </Button>
               <Button onClick={() => firebase.logout()} variant="outlined">
                 Cerrar sesión
               </Button>
