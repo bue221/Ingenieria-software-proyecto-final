@@ -4,6 +4,7 @@ import { useFieldArray } from "react-hook-form";
 import TextFieldController from "shared/UI/components/TextfieldController";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const NestedArray = ({ nestIndex, control }: any) => {
   const { fields, remove, append } = useFieldArray({
     control,

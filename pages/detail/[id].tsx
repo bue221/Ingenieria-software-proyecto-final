@@ -15,7 +15,6 @@ import ReactPlayer from "react-player";
 import { StyledTab } from "shared/UI/components/StyledTab";
 import { StyledTabs } from "shared/UI/components/StyledTabs";
 import { TabPanel } from "shared/UI/components/TabPanel";
-import AuthLayout from "shared/UI/layouts/AuthLayout";
 
 function a11yProps(index: number) {
   return {

@@ -1,17 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Typography, Button, IconButton } from "@mui/material";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useFirebase } from "react-redux-firebase";
 import NestedArray from "shared/forms/nestedArray";
 import TextFieldController from "shared/UI/components/TextfieldController";
 import TeacherLayout from "shared/UI/layouts/TeacherLayout";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const AddCourse = () => {
-  const router = useRouter();
-  const firebase = useFirebase();
   const { control, register, handleSubmit } = useForm({
     defaultValues: {
       capitulos: [{}],

@@ -4,20 +4,15 @@ import {
   Button,
   Container,
   IconButton,
-  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import router, { useRouter } from "next/router";
-import { useFirebase } from "react-redux-firebase";
+import router from "next/router";
 import styles from "../styles/Home.module.css";
 import { useAppSelector } from "shared/redux/hooks";
 import MainTeacherView from "shared/pages/MainTeacherView";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
-import TextFieldController from "shared/UI/components/TextfieldController";
 import { StyledTab } from "shared/UI/components/StyledTab";
 import { StyledTabs } from "shared/UI/components/StyledTabs";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
@@ -32,19 +27,6 @@ function a11yProps(index: number) {
 }
 
 const Home: NextPage = () => {
-  const firebase = useFirebase();
-  const history = useRouter();
-  const signInWithGoogle = () => {
-    firebase
-      .login({
-        provider: "google",
-        type: "popup",
-      })
-      .then(() => {
-        history.push("/todos");
-      });
-  };
-
   const user = useAppSelector((state) => state.user);
   const [value, setValue] = React.useState(0);
 
