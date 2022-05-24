@@ -8,7 +8,7 @@ interface StyledTabsProps {
   onChange: (event: React.SyntheticEvent, newValue: number) => void;
 }
 
-export const StyledTabs = styled((props: StyledTabsProps) => (
+export const StyledTabs = styled((props: any) => (
   <Tabs
     {...props}
     TabIndicatorProps={{ children: <span className="MuiTabs-indicatorSpan" /> }}

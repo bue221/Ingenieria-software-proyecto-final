@@ -150,7 +150,7 @@ const DetailCourse = () => {
           Contenido:
         </Typography>
         <Box sx={{ pb: 20 }}>
-          {data?.capitulos?.map((i: any, index) => (
+          {data?.capitulos?.map((i: any, index: number) => (
             <>
               <Typography variant="h6" mt={2} color="primary">
                 Capitulo {index + 1}:
@@ -177,7 +177,7 @@ const DetailCourse = () => {
                 </AccordionDetails>
               </Accordion>
               <Box px={2} py={1}>
-                {i?.leccion?.map((i: any, index) => (
+                {i?.leccion?.map((i: any, index: number) => (
                   <>
                     <Typography variant="body1" mt={2} color="primary">
                       leccion {index + 1}:
