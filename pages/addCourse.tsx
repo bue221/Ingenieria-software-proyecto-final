@@ -7,6 +7,10 @@ import NestedArray from "shared/forms/nestedArray";
 import TextFieldController from "shared/UI/components/TextfieldController";
 import TeacherLayout from "shared/UI/layouts/TeacherLayout";
 import DeleteIcon from "@mui/icons-material/Delete";
+import MultipleSelectChip from "shared/UI/components/MultipleSelect";
+import { useFirebase } from "react-redux-firebase";
+import { useRouter } from "next/router";
+import { useAppSelector } from "shared/redux/hooks";
 
 const AddCourse = () => {
   const { control, register, handleSubmit } = useForm({
@@ -20,8 +24,24 @@ const AddCourse = () => {
     name: "capitulos",
   });
 
-  const onSubmit = (data: any) => {
-    console.log(data);
+  const firebase = useFirebase();
+  const { push } = useRouter();
+  const user = useAppSelector((state) => state.user);
+  const onSubmit = async (data: any) => {
+    try {
+      await firebase
+        .firestore()
+        .collection("cursos")
+        .add({
+          ...data,
+          emailCreator: user?.value?.email,
+          estudiantes: [],
+          rating: 0,
+        });
+      push("/");
+    } catch (err) {
+      alert("error");
+    }
   };
 
   return (
@@ -43,9 +63,19 @@ const AddCourse = () => {
                   control={control}
                 />
                 <TextFieldController
+                  name="image"
+                  label="Imagen del curso"
+                  control={control}
+                />
+                <TextFieldController
                   name="descripcion"
                   label="Descripcion"
                   control={control}
+                />
+                <MultipleSelectChip
+                  control={control}
+                  name="categorias"
+                  label="categorias"
                 />
                 <TextFieldController
                   name="autor"

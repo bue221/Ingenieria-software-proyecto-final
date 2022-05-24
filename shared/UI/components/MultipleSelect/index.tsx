@@ -36,7 +36,7 @@ const categories = [
 function getStyles(name: string, personName: readonly string[], theme: Theme) {
   return {
     fontWeight:
-      personName.indexOf(name) === -1
+      categories.indexOf(name) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
   };
@@ -59,19 +59,20 @@ export default function MultipleSelectChip({
         formState: { errors },
       }) => (
         <div>
-          <FormControl error={!!errors[name]} sx={{ m: 1, width: 300 }}>
+          <FormControl error={!!errors[name]} sx={{ width: "100%" }}>
             <InputLabel id="demo-multiple-chip-label">{label}</InputLabel>
             <Select
+              fullWidth
               labelId="demo-multiple-chip-label"
               id="demo-multiple-chip"
               multiple
-              value={value}
+              value={value || []}
               onBlur={onBlur}
               onChange={(event) => {
                 const {
                   target: { value },
                 } = event;
-                onChange(typeof value === "string" ? value.split(",") : value);
+                onChange(value);
               }}
               input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
               renderValue={(selected) => (

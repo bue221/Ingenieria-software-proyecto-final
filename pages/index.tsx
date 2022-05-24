@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import type { NextPage } from "next";
 import Head from "next/head";
-import router from "next/router";
+import router, { useRouter } from "next/router";
 import styles from "../styles/Home.module.css";
 import { useAppSelector } from "shared/redux/hooks";
 import MainTeacherView from "shared/pages/MainTeacherView";
@@ -18,6 +18,7 @@ import { StyledTabs } from "shared/UI/components/StyledTabs";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import { TabPanel } from "shared/UI/components/TabPanel";
 import CardCourse from "shared/UI/components/CardCourse";
+import { useFirebase } from "react-redux-firebase";
 
 function a11yProps(index: number) {
   return {
@@ -25,6 +26,19 @@ function a11yProps(index: number) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
+
+const categories = [
+  "Educación",
+  "Cocina",
+  "Entretenimiento",
+  "Marketing",
+  "Programación",
+  "Machine learning",
+  "Emprendimiento",
+  "Politica",
+  "Historia",
+  "Geografia",
+];
 
 const Home: NextPage = () => {
   const user = useAppSelector((state) => state.user);
@@ -34,6 +48,31 @@ const Home: NextPage = () => {
     setValue(newValue);
   };
 
+  const firebase = useFirebase();
+  const [data, setData] = useState<any>([]);
+  const getData = async () => {
+    firebase
+      .firestore()
+      .collection("cursos")
+      .get()
+      .then(async (doc) => {
+        if (doc.docs) {
+          const data = await doc.docs.map((doc) => ({
+            ...doc.data(),
+            uid: doc.id,
+          }));
+          setData(data);
+        } else {
+          throw new Error();
+        }
+      });
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const router = useRouter();
+  // console.log(router.query);
   return (
     <div className={styles.container}>
       <Head>
@@ -76,22 +115,24 @@ const Home: NextPage = () => {
                   alignItems: "center",
                 }}
               >
-                <Button onClick={() => router.push("/login")}>
-                  Iniciar sesión
-                </Button>
+                {!user.isLogin && (
+                  <Button onClick={() => router.push("/login")}>
+                    Iniciar sesión
+                  </Button>
+                )}{" "}
               </Box>
             </Box>
             <form>
               <Box mt={10}>
                 <Typography color="#151143" fontSize="16px">
-                  Bienvenid@ vamos a aprender 👋
+                  Bienvenid@ {user?.value?.email} vamos a aprender 👋
                 </Typography>
                 <Typography fontWeight="bold" color="#151143" fontSize="24px">
                   Explora y busca nuevos cursos.
                 </Typography>
               </Box>
               <Box>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
+                {/* <Box sx={{ display: "flex", alignItems: "center" }}>
                   <TextField
                     variant="outlined"
                     placeholder="Buscar ..."
@@ -103,44 +144,36 @@ const Home: NextPage = () => {
                       <ManageSearchIcon />
                     </IconButton>
                   </Box>
-                </Box>
+                </Box> */}
                 <Box>
                   <StyledTabs
                     value={value}
                     onChange={handleChange}
                     aria-label="styled tabs example"
+                    variant="scrollable"
+                    scrollButtons="auto"
                   >
-                    <StyledTab label="Nuevos" {...a11yProps(0)} />
-                    <StyledTab label="Recomendados" {...a11yProps(1)} />
-                    <StyledTab label="Tecnología" {...a11yProps(2)} />
+                    {categories.map((i, index) => (
+                      <StyledTab key={index} label={i} {...a11yProps(index)} />
+                    ))}
                   </StyledTabs>
-                  <TabPanel value={value} index={0}>
-                    <div
-                      style={{
-                        display: "flex",
-                        overflowX: "scroll",
-                        width: "100%",
-                        gap: 10,
-                      }}
-                    >
-                      <CardCourse />
-                      <CardCourse />
-                      <CardCourse />
-                      <CardCourse />
-                      <CardCourse />
-                      <CardCourse />
-                      <CardCourse />
-                      <CardCourse />
-                      <CardCourse />
-                      <CardCourse />
-                    </div>
-                  </TabPanel>
-                  <TabPanel value={value} index={1}>
-                    Item Two
-                  </TabPanel>
-                  <TabPanel value={value} index={2}>
-                    Item Three
-                  </TabPanel>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      width: "100%",
+                      gap: 10,
+                      py: 6,
+                    }}
+                  >
+                    {data
+                      ?.filter((i: any) =>
+                        i.categorias.includes(categories[value])
+                      )
+                      .map((i: any, index: number) => (
+                        <CardCourse key={index} {...i} />
+                      ))}
+                  </Box>
                 </Box>
               </Box>
             </form>

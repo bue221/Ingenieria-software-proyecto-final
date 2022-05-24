@@ -1,4 +1,7 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
   Card,
   Container,
@@ -7,14 +10,18 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box } from "@mui/system";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineLeft, AiTwotoneHeart, AiOutlineMore } from "react-icons/ai";
 import ReactPlayer from "react-player";
+import { useFirebase } from "react-redux-firebase";
 import { StyledTab } from "shared/UI/components/StyledTab";
 import { StyledTabs } from "shared/UI/components/StyledTabs";
 import { TabPanel } from "shared/UI/components/TabPanel";
+import PayUForm from "shared/forms/PayUForm";
+import { useAppSelector } from "shared/redux/hooks";
 
 function a11yProps(index: number) {
   return {
@@ -24,8 +31,7 @@ function a11yProps(index: number) {
 }
 
 const DetailCourse = () => {
-  const router = useRouter();
-  console.log(router.query.id);
+  const router: any = useRouter();
   const theme = useTheme();
   const mediaQuery = useMediaQuery(theme.breakpoints.down("md"));
   const [value, setValue] = React.useState(0);
@@ -33,6 +39,44 @@ const DetailCourse = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  const firebase = useFirebase();
+  const [data, setData] = useState<any>([]);
+  const getData = async () => {
+    firebase
+      .firestore()
+      .collection("cursos")
+      .doc(router.query.id)
+      .get()
+      .then(async (doc) => {
+        setData({
+          ...doc.data(),
+          uid: doc.id,
+        });
+      });
+  };
+  useEffect(() => {
+    getData();
+  }, [router.query.id]);
+
+  const [urlvideo, setUrlvideo] = useState("");
+  useEffect(() => {
+    if (data?.capitulos?.length > 0)
+      setUrlvideo(data?.capitulos[0].leccion[0]?.videoUrl);
+  }, [data]);
+  const [expanded, setExpanded] = React.useState<string | false>(false);
+
+  const handleChange1 =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
+  const [expanded2, setExpanded2] = React.useState<string | false>(false);
+
+  const handleChange2 =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded2(isExpanded ? panel : false);
+    };
+  const user = useAppSelector((state) => state.user);
   return (
     <Container
       sx={{
@@ -51,17 +95,11 @@ const DetailCourse = () => {
           sx={{ background: "white", width: 24, mx: 0 }}
           variant="contained"
           color="inherit"
+          onClick={() => router.back()}
         >
           <AiOutlineLeft size={24} />
         </Button>
         <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            sx={{ background: "white", width: 24, mx: 0 }}
-            variant="contained"
-            color="inherit"
-          >
-            <AiTwotoneHeart color="#FC3636" size={24} />
-          </Button>
           <Button
             sx={{ background: "white", width: 24, mx: 0 }}
             variant="contained"
@@ -73,7 +111,7 @@ const DetailCourse = () => {
       </Box>
       <Box sx={{ my: 4 }}>
         <ReactPlayer
-          url="https://www.youtube.com/watch?v=IC2CYEurFX4"
+          url={urlvideo}
           className="react-player"
           playing
           width="100%"
@@ -84,77 +122,129 @@ const DetailCourse = () => {
       </Box>
       <Box>
         <Box>
-          <Typography>Curso de programación web</Typography>
-          <Box>
-            <Typography>$99.45</Typography>
-            <Typography>$99.45</Typography>
+          <Typography variant="h3" textAlign="center" color="primary">
+            {data?.nombre}
+          </Typography>
+          <Typography variant="h6" mt={2} color="primary">
+            Descripcion:
+          </Typography>
+          <Typography
+            paragraph
+            sx={{
+              textAlign: "center",
+              mt: 2,
+            }}
+          >
+            {data?.descripcion}
+          </Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="h6">
+              {data?.capitulos?.length} capitulos
+            </Typography>
+            <Typography variant="h6" color="primary">
+              $ {data?.precio}
+            </Typography>
           </Box>
         </Box>
-        <Box>
-          <Typography>16 trazos • 2h 13m en total</Typography>
+        <Typography variant="h5" mt={2} color="primary">
+          Contenido:
+        </Typography>
+        <Box sx={{ pb: 20 }}>
+          {data?.capitulos?.map((i: any, index) => (
+            <>
+              <Typography variant="h6" mt={2} color="primary">
+                Capitulo {index + 1}:
+              </Typography>
+              <Accordion
+                expanded={expanded === `panel${index}`}
+                onChange={handleChange1(`panel${index}`)}
+                key={index}
+              >
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1bh-content"
+                  id="panel1bh-header"
+                >
+                  <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                    {i.titulo}
+                  </Typography>
+                  <Typography sx={{ color: "text.secondary" }}>
+                    {i.subtitulo}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>{i.descripcion}</Typography>
+                </AccordionDetails>
+              </Accordion>
+              <Box px={2} py={1}>
+                {i?.leccion?.map((i: any, index) => (
+                  <>
+                    <Typography variant="body1" mt={2} color="primary">
+                      leccion {index + 1}:
+                    </Typography>
+                    <Accordion
+                      expanded={expanded2 === `panel${index}`}
+                      onChange={handleChange2(`panel${index}`)}
+                      key={index}
+                      disabled
+                    >
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1bh-content"
+                        id="panel1bh-header"
+                      >
+                        <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                          {i.nombre}
+                        </Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Typography>{i.descripcion}</Typography>
+                        <ReactPlayer
+                          url={i?.videoUrl}
+                          className="react-player"
+                          width="100%"
+                          controls
+                          height={mediaQuery ? "200px" : "500px"}
+                          style={{ borderRadius: "30px" }}
+                        />
+                      </AccordionDetails>
+                    </Accordion>
+                  </>
+                ))}
+              </Box>
+            </>
+          ))}
         </Box>
-        <Box>
-          <Card sx={{ display: "flex" }}>
-            <Box>
-              <Typography>$99.45</Typography>
-              <Typography>$99.45</Typography>
-            </Box>
-            <Divider orientation="vertical" flexItem />
-            <Box>
-              <Typography>$99.45</Typography>
-              <Typography>$99.45</Typography>
-            </Box>
-            <Divider orientation="vertical" flexItem />
-
-            <Box>
-              <Typography>$99.45</Typography>
-              <Typography>$99.45</Typography>
-            </Box>
-          </Card>
-        </Box>
-        <Box mt={10}>
-          <StyledTabs
-            value={value}
-            onChange={handleChange}
-            aria-label="styled tabs example"
-          >
-            <StyledTab label="Workflows" {...a11yProps(0)} />
-            <StyledTab label="Datasets" {...a11yProps(1)} />
-            <StyledTab label="Connections" {...a11yProps(2)} />
-          </StyledTabs>
-        </Box>
-      </Box>
-      <TabPanel value={value} index={0}>
-        Item One
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-        Item Two
-      </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
-      <Box>o</Box>
-
-      <Box
-        sx={{
-          position: "fixed",
-          bottom: "4em",
-          display: "flex",
-          justifyContent: "space-evenly",
-          left: 0,
-          right: 0,
-        }}
-      >
-        <Button
-          sx={{ background: "white" }}
-          variant="contained"
-          color="inherit"
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: "4em",
+            display: "flex",
+            justifyContent: "space-evenly",
+            left: 0,
+            right: 0,
+          }}
         >
-          Añadir al carrito
-        </Button>
-        <Button sx={{}} variant="contained">
-          Comprar
-        </Button>
+          {user.isLogin ? (
+            <PayUForm
+              reference={`pagoC${data?.uid}`}
+              amount={data?.precio}
+              email={user?.value?.email}
+              description={data?.descripcion}
+              idUser={undefined}
+              idCase={undefined}
+            />
+          ) : (
+            <Button
+              variant="contained"
+              onClick={() => router.push("/register")}
+              sx={{ px: 2 }}
+              fullWidth
+            >
+              Comprar
+            </Button>
+          )}
+        </Box>
       </Box>
     </Container>
   );
