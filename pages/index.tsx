@@ -115,9 +115,13 @@ const Home: NextPage = () => {
                   alignItems: "center",
                 }}
               >
-                {!user.isLogin && (
+                {!user.isLogin ? (
                   <Button onClick={() => router.push("/login")}>
                     Iniciar sesión
+                  </Button>
+                ) : (
+                  <Button onClick={() => firebase.logout()}>
+                    Cerrar sesion
                   </Button>
                 )}{" "}
               </Box>

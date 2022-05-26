@@ -186,7 +186,12 @@ const DetailCourse = () => {
                       expanded={expanded2 === `panel${index}`}
                       onChange={handleChange2(`panel${index}`)}
                       key={index}
-                      disabled
+                      disabled={
+                        !(
+                          data?.estudiantes?.includes(user.value.email) ||
+                          data?.emailCreator == user.value.email
+                        )
+                      }
                     >
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
@@ -227,7 +232,7 @@ const DetailCourse = () => {
         >
           {user.isLogin ? (
             <PayUForm
-              reference={`pagoC${data?.uid}`}
+              reference={`pagoC${data?.uid}${user.email}`}
               amount={data?.precio}
               email={user?.value?.email}
               description={data?.descripcion}
