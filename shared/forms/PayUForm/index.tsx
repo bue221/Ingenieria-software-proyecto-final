@@ -40,11 +40,11 @@ const PayUForm: React.FC<Props> = ({
       <input name="buyerEmail" type="hidden" value={email} />
       <input name="extra1" type="hidden" value={idUser} />
       <input name="extra2" type="hidden" value={idCase} />
-      <input name="responseUrl" type="hidden" value="http://localhost:3001/" />
+      <input name="responseUrl" type="hidden" value="https://spectacular-smakager-43a50c.netlify.app/" />
       <input
         name="confirmationUrl"
         type="hidden"
-        value="http://localhost:3001/"
+        value="https://spectacular-smakager-43a50c.netlify.app/"
       />
       <Button variant="contained" type="submit" sx={{ px: 2 }} fullWidth>
         Comprar
