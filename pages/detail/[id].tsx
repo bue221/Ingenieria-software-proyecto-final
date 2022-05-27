@@ -240,14 +240,20 @@ const DetailCourse = () => {
               idCase={undefined}
             />
           ) : (
+            <>
+            {!(
+                          data?.estudiantes?.includes(user.value?.email) ||
+                          data?.emailCreator == user.value?.email
+                        ) &&
             <Button
               variant="contained"
               onClick={() => router.push("/register")}
               sx={{ px: 2 }}
               fullWidth
-            >
+              >
               Comprar
-            </Button>
+            </Button>}
+          </>
           )}
         </Box>
       </Box>
