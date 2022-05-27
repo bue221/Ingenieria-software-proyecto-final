@@ -188,8 +188,8 @@ const DetailCourse = () => {
                       key={index}
                       disabled={
                         !(
-                          data?.estudiantes?.includes(user.value.email) ||
-                          data?.emailCreator == user.value.email
+                          data?.estudiantes?.includes(user.value?.email) ||
+                          data?.emailCreator == user.value?.email
                         )
                       }
                     >
